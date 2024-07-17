@@ -105,7 +105,7 @@ const ThemeSwitch = () => {
                     )}
                   </Menu.Item>
                 </RadioGroup.Option>
-                {/* <RadioGroup.Option value="system">
+                <RadioGroup.Option value="system">
                   <Menu.Item>
                     {({ active }) => (
                       <button
@@ -120,7 +120,7 @@ const ThemeSwitch = () => {
                       </button>
                     )}
                   </Menu.Item>
-                </RadioGroup.Option> */}
+                </RadioGroup.Option>
               </div>
             </RadioGroup>
           </Menu.Items>

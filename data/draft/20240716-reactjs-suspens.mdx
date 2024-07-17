@@ -1,0 +1,142 @@
+---
+title: 'ReactJs Suspense와 ErrorBoundary'
+date: '2024-07-16'
+tags: ['DEV', 'WEB', 'React.js', 'Next.js']
+draft: false
+summary: '웹사이트 성능 향상과 사용자 경험 개선을 위한 폰트 최적화 방법'
+---
+
+### ReactJS에서 Suspense 사용법: 비동기 렌더링의 새로운 방식
+
+React 16.6부터 도입된 Suspense는 비동기 컴포넌트 렌더링을 간단하게 처리할 수 있는 강력한 기능입니다. 이를 통해 데이터가 로드되기 전까지 로딩 스피너와 같은 대체 UI를 표시하는 것이 훨씬 쉬워졌습니다. 이 글에서는 React에서 Suspense를 사용하는 방법을 단계별로 설명하겠습니다.
+
+#### 1. Suspense란 무엇인가?
+
+Suspense는 React 애플리케이션에서 비동기 작업을 관리하는데 도움을 줍니다. 주로 데이터 페칭과 코드 스플리팅(code-splitting)에 사용됩니다. Suspense를 사용하면 컴포넌트가 비동기 작업을 수행하는 동안 기다리게 하고, 그 동안 로딩 상태를 표시할 수 있습니다.
+
+#### 2. Suspense의 기본 사용법
+
+Suspense를 사용하기 위해서는 `React.Suspense` 컴포넌트를 사용하고, 비동기 작업을 수행하는 컴포넌트를 그 안에 감싸면 됩니다. 기본적으로 Suspense는 로딩 상태를 나타내기 위해 `fallback` prop을 사용합니다.
+
+```jsx
+import React, { Suspense } from 'react'
+
+const LazyComponent = React.lazy(() => import('./LazyComponent'))
+
+function App() {
+  return (
+    <div>
+      <h1>My App</h1>
+      <Suspense fallback={<div>Loading...</div>}>
+        <LazyComponent />
+      </Suspense>
+    </div>
+  )
+}
+
+export default App
+```
+
+위 예제에서 `LazyComponent`는 동적으로 로드되는 컴포넌트입니다. 로딩이 완료되기 전까지 `Suspense`의 `fallback`으로 지정된 `Loading...` 메시지가 표시됩니다.
+
+#### 3. 데이터 페칭과 Suspense
+
+React 18부터 Suspense는 데이터 페칭을 더욱 쉽게 관리할 수 있도록 발전했습니다. `React.lazy`와 함께 Suspense를 사용하여 컴포넌트를 동적으로 로드하는 것 외에도, 데이터 페칭 라이브러리와 결합하여 비동기 데이터를 처리할 수 있습니다. React 공식 라이브러리인 `react-fetch`를 예로 들어보겠습니다.
+
+먼저 `react-fetch`를 설치합니다:
+
+```bash
+npm install react-fetch
+```
+
+그리고 다음과 같이 사용할 수 있습니다:
+
+```jsx
+import React, { Suspense } from 'react'
+import { fetch } from 'react-fetch'
+
+const DataFetchingComponent = () => {
+  const data = fetch('/api/data').json()
+  return (
+    <div>
+      <h2>Data:</h2>
+      <pre>{JSON.stringify(data, null, 2)}</pre>
+    </div>
+  )
+}
+
+function App() {
+  return (
+    <div>
+      <h1>My App</h1>
+      <Suspense fallback={<div>Loading data...</div>}>
+        <DataFetchingComponent />
+      </Suspense>
+    </div>
+  )
+}
+
+export default App
+```
+
+위 예제에서는 `DataFetchingComponent`가 `/api/data`에서 데이터를 페칭하고 있습니다. 데이터가 로드되는 동안 `Loading data...` 메시지가 표시됩니다.
+
+#### 4. Suspense와 Error Boundaries
+
+Suspense를 사용할 때, 비동기 작업 중 에러가 발생할 수 있습니다. 이를 처리하기 위해 `Error Boundaries`를 사용하여 에러 상태를 관리할 수 있습니다.
+
+```jsx
+import React, { Component, Suspense } from 'react'
+import { fetch } from 'react-fetch'
+
+class ErrorBoundary extends Component {
+  state = { hasError: false }
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true }
+  }
+
+  componentDidCatch(error, errorInfo) {
+    console.error('Error caught in ErrorBoundary:', error, errorInfo)
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return <h2>Something went wrong.</h2>
+    }
+
+    return this.props.children
+  }
+}
+
+const DataFetchingComponent = () => {
+  const data = fetch('/api/data').json()
+  return (
+    <div>
+      <h2>Data:</h2>
+      <pre>{JSON.stringify(data, null, 2)}</pre>
+    </div>
+  )
+}
+
+function App() {
+  return (
+    <div>
+      <h1>My App</h1>
+      <ErrorBoundary>
+        <Suspense fallback={<div>Loading data...</div>}>
+          <DataFetchingComponent />
+        </Suspense>
+      </ErrorBoundary>
+    </div>
+  )
+}
+
+export default App
+```
+
+위 예제에서는 `ErrorBoundary`를 사용하여 `DataFetchingComponent`에서 발생하는 에러를 처리하고 있습니다. 에러가 발생하면 `Something went wrong.` 메시지가 표시됩니다.
+
+### 결론
+
+Suspense는 React 애플리케이션에서 비동기 작업을 처리하는 강력한 도구입니다. 컴포넌트가 로드되기 전까지 로딩 상태를 표시하고, 에러를 효과적으로 처리할 수 있습니다. Suspense를 사용하면 사용자 경험을 개선하고, 코드 스플리팅과 데이터 페칭을 더욱 간단하게 관리할 수 있습니다. React 18에서는 더 발전된 Suspense 기능을 통해 데이터 페칭을 더욱 쉽게 다룰 수 있으니, 최신 버전을 사용하여 최적의 성능을 누리시기 바랍니다.
