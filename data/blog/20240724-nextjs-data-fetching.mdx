@@ -1,21 +1,19 @@
 ---
-title: 'Next.js에서의 데이터 페칭: Pages Router vs App Router'
-date: '2024-07-15'
+title: 'Next.js 데이터 페칭: Pages Router vs App Router'
+date: '2024-07-24'
 tags: ['DEV', 'WEB', 'React.js', 'Next.js']
 draft: false
-summary: 'Next.js는 React 기반의 프레임워크로, 서버 사이드 렌더링(SSR), 정적 사이트 생성(SSG), 클라이언트 사이드 렌더링(CSR) 등 다양한 데이터 페칭 방식과 렌더링 옵션을 제공합니다. Next.js에서 데이터 페칭을 어떻게 사용하는지, 특히 Pages Router와 App Router 방식을 비교하여 정리해보겠습니다.'
+summary: 'Next.js는 React 기반의 프레임워크로, 서버 사이드 렌더링(SSR), 정적 사이트 생성(SSG), 클라이언트 사이드 렌더링(CSR) 등 다양한 데이터 페칭 방식과 렌더링 옵션을 제공한다. Next.js에서 데이터 페칭을 어떻게 사용하는지, 특히 Pages Router와 App Router 방식을 비교하여 정리해보자.'
 ---
-
-Next.js는 React 기반의 프레임워크로, 서버 사이드 렌더링(SSR), 정적 사이트 생성(SSG), 클라이언트 사이드 렌더링(CSR) 등 다양한 데이터 페칭 방식과 렌더링 옵션을 제공합니다. Next.js에서 데이터 페칭을 어떻게 사용하는지, 특히 Pages Router와 App Router 방식을 비교하여 정리해보겠습니다.
 
 ## Pages Router 방식에서의 Data Fetching
 
-Next.js의 Pages Router 방식은 `pages` 디렉토리 내의 파일을 페이지로 간주합니다. 각 페이지 컴포넌트는 다양한 데이터 페칭 메소드를 통해 데이터를 가져올 수 있습니다.
+Next.js의 Pages Router 방식은 `pages` 디렉토리 내의 파일을 페이지로 간주한다. 각 페이지 컴포넌트는 다양한 데이터 페칭 메소드를 통해 데이터를 가져올 수 있다.
 
 #### 1. **getStaticProps**
 
-- `getStaticProps`는 정적 사이트 생성을 위해 `빌드 타임`에 데이터를 페칭하여 페이지를 미리 렌더링
-- 데이터가 자주 변경되지 않고, 빌드 시점에 고정된 데이터를 사용해야 할 때 사용됨
+- `getStaticProps`는 정적 사이트 생성을 위해 `빌드 타임`에 데이터를 페칭하여 페이지를 미리 렌더링함.
+- 데이터가 자주 변경되지 않고, `빌드 시점`에 고정된 데이터를 사용해야 할 때 사용됨
 - 빠른 로드 속도와 SEO 친화적
 - 빌드 시간이 길어질 수 있음
 
@@ -40,7 +38,7 @@ export default Page
 
 #### 2. **getServerSideProps**
 
-- 서버 사이드 렌더링을 위해 `요청 시마다` 서버에서 데이터를 페칭하여 페이지를 렌더링
+- 서버 사이드 렌더링을 위해 `요청 시마다` 서버에서 데이터를 페칭하여 페이지를 렌더링함
 - 실시간으로 자주 변경되는 데이터가 필요할 때 사용
 - 항상 최신 데이터를 제공이 필요할 때 사용
 - 초기 로드 시간이 길어질 수 있음
@@ -66,8 +64,8 @@ export default Page
 
 #### 3. **Incremental Static Regeneration (ISR)**
 
-- ISR은 Next.js에서 제공하는 기능으로, 기존의 SSG 방식에 더하여 특정 페이지를 정적으로 생성한 후, 필요에 따라 해당 페이지를 점진적으로 다시 생성하여 최신 상태를 유지하는 방식
-- `revalidate` 옵션을 사용하여 페이지가 재생성되는 주기를 설정할 수 있음. 예를 들어, `revalidate`: 60으로 설정하면 해당 페이지는 60초마다 재생성됨.
+- ISR은 Next.js에서 제공하는 기능으로, 기존의 SSG 방식에 더하여 특정 페이지를 정적으로 생성한 후, 필요에 따라 해당 페이지를 점진적으로 다시 생성하여 최신 상태를 유지하는 방식이다.
+- `revalidate` 옵션을 사용하여 페이지가 재생성되는 주기를 설정할 수 있다. 예를 들어, `revalidate: 60`으로 설정하면 해당 페이지는 60초마다 재생성된다.
 
 ```javascript
 // This function gets called at build time on server-side.
@@ -89,11 +87,9 @@ export async function getStaticProps() {
 }
 ```
 
-### App Router 방식에서의 Data Fetching
+## App Router 방식에서의 Data Fetching
 
-Next.js의 App Router 방식은 `app` 디렉토리를 사용하여 페이지를 정의하며, React의 서버 컴포넌트 기능을 활용합니다. 이는 데이터 페칭과 페이지 렌더링에 대한 새로운 접근 방식을 제공합니다.
-
-Next.js에서 Data Fetching 지원함에 따라 *fetch() Web API*를 사용할 수 있게 되었으며, 컴포넌트 레벨에서도 SSR 적용이 가능하다.
+Next.js의 App Router 방식은 `app` 디렉토리를 사용하여 페이지를 정의하며, React의 서버 컴포넌트 기능을 활용한다. 이는 데이터 페칭과 페이지 렌더링에 대한 새로운 접근 방식을 제공한다. 특히 Next.js에서 Data Fetching을 지원함에 따라 *fetch() Web API*를 사용할 수 있게 되었으며, 컴포넌트 레벨에서도 SSR 적용이 가능하다.
 
 #### **getStaticProps와 getServerSideProps의 대체**
 
