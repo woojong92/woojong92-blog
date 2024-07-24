@@ -1,0 +1,83 @@
+---
+title: 'null 병합 연산자(??) 이해하기'
+date: '2024-07-25'
+tags: ['DEV', 'WEB', 'javascript']
+draft: false
+summary: '프로그래밍에서 null 값 처리는 중요한 부분 중 하나이다. 값이 null이거나 정의되지 않았을 때 이를 대체할 기본값을 제공하는 방법이 필요하다. 이를 위해 JavaScript에서는 ES2020에서 도입된 null 병합 연산자(nullish coalescing operator, `??`)를 사용한다. 이 글에서는 null 병합 연산자의 개념과 사용법, 그리고 간단한 예시를 통해 이를 이해해보자.'
+---
+
+프로그래밍에서 null 값 처리는 중요한 부분 중 하나이다. 값이 null이거나 정의되지 않았을 때 이를 대체할 기본값을 제공하는 방법이 필요하다. 이를 위해 JavaScript에서는 ES2020에서 도입된 null 병합 연산자(nullish coalescing operator, `??`)를 사용한다. 이 글에서는 null 병합 연산자의 개념과 사용법, 그리고 간단한 예시를 통해 이를 이해해보자.
+
+### null 병합 연산자란?
+
+null 병합 연산자(`??`)는 변수의 값이 `null` 또는 `undefined`인 경우, 다른 값을 반환하도록 한다. 즉, `a ?? b`는 `a`가 `null` 또는 `undefined`인 경우 `b`를 반환하고, 그렇지 않으면 `a`를 반환합니다.
+
+### 사용법
+
+기본적인 사용법은 다음과 같다.
+
+```javascript
+let result = a ?? b
+```
+
+여기서 `a`가 `null` 또는 `undefined`라면 `result`는 `b`의 값을 가지게 되고, 그렇지 않다면 `a`의 값을 가지게 된다.
+
+### 예시
+
+몇 가지 예시를 통해 구체적으로 살펴보자.
+
+#### 기본 예시
+
+```javascript
+let name = null
+let defaultName = 'John Doe'
+
+let displayName = name ?? defaultName
+console.log(displayName) // "John Doe"
+```
+
+위 코드에서 `name`이 `null`이기 때문에 `displayName`은 `defaultName`의 값인 "John Doe"를 갖게 된다.
+
+#### undefined 값 처리
+
+```javascript
+let age
+let defaultAge = 25
+
+let userAge = age ?? defaultAge
+console.log(userAge) // 25
+```
+
+이 예제에서는 `age`가 정의되지 않았기 때문에 `userAge`는 `defaultAge`인 25가 된다.
+
+#### null이나 undefined가 아닌 값
+
+```javascript
+let greeting = 'Hello'
+let defaultGreeting = 'Hi'
+
+let message = greeting ?? defaultGreeting
+console.log(message) // "Hello"
+```
+
+여기서는 `greeting`이 "Hello"로 정의되어 있으므로 `message`는 `greeting`의 값인 "Hello"를 그대로 반환한다.
+
+#### null 병합 연산자와 논리 OR 연산자 비교
+
+null 병합 연산자는 논리 OR 연산자(`||`)와 유사해 보일 수 있지만, 중요한 차이점이 있다. OR 연산자는 `false`, `0`, 빈 문자열 같은 falsy 값도 무시하는 반면, null 병합 연산자는 `null`과 `undefined`만 무시합니다.
+
+```javascript
+let count = 0
+
+let defaultCount = count || 10
+console.log(defaultCount) // 10
+
+let actualCount = count ?? 10
+console.log(actualCount) // 0
+```
+
+위 예제에서 OR 연산자는 `count`가 0임에도 불구하고 `defaultCount`를 10으로 설정한다. 반면, null 병합 연산자는 `count`가 `null` 또는 `undefined`가 아니므로 `actualCount`를 0으로 설정한다.
+
+### 마치며
+
+null 병합 연산자(`??`)는 값이 `null` 또는 `undefined`일 때 기본값을 설정하는 데 유용한 도구이다. 이를 통해 코드의 가독성을 높이고, null 값 처리를 간단하게 할 수 있다. null 병합 연산자를 활용하면 코드에서 null 또는 undefined로 인한 오류를 방지하고, 보다 안정적인 코드를 작성할 수 있다.
