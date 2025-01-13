@@ -2425,6 +2425,23 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@next/mdx@npm:^15.1.4":
+  version: 15.1.4
+  resolution: "@next/mdx@npm:15.1.4"
+  dependencies:
+    source-map: ^0.7.0
+  peerDependencies:
+    "@mdx-js/loader": ">=0.15.0"
+    "@mdx-js/react": ">=0.15.0"
+  peerDependenciesMeta:
+    "@mdx-js/loader":
+      optional: true
+    "@mdx-js/react":
+      optional: true
+  checksum: 3a0120fface0a8e5bc7d7890c51f41da9337eb340aa29b572897359beb53fd028019224f4d411abefcae6d3445d76873aef89c97e2824df07e903e9f34f17f15
+  languageName: node
+  linkType: hard
+
 "@next/swc-darwin-arm64@npm:14.2.3":
   version: 14.2.3
   resolution: "@next/swc-darwin-arm64@npm:14.2.3"
@@ -10900,6 +10917,7 @@ __metadata:
   dependencies:
     "@headlessui/react": 1.7.19
     "@next/bundle-analyzer": 14.2.3
+    "@next/mdx": ^15.1.4
     "@svgr/webpack": ^8.0.1
     "@tailwindcss/forms": ^0.5.7
     "@tailwindcss/typography": ^0.5.12
