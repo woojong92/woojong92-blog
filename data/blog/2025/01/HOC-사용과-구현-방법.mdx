@@ -1,0 +1,221 @@
+---
+title: HOC(High Order Component) 사용과 구현 방법
+date: 2025-01-13 14:08
+tags:
+  - React
+  - HOC
+  - 최적화
+draft: false
+summary: React의 고급 기술 중 하나인 High Order Component(HOC)는 재사용 가능한 컴포넌트를 생성하고 기존 컴포넌트의 기능을 확장하는 데 유용한 패턴입니다. 이 글에서는 HOC의 개념, 동작 원리, 구현 방법, 그리고 주요 사용 사례를 다룹니다.
+---
+
+## 1. HOC란 무엇인가?
+
+### HOC의 정의
+
+HOC (High Order Component)는 React에서 재사용 가능한 컴포넌트를 생성하는 고급 기술입니다. 컴포넌트를 인수로 받아 새로운 컴포넌트를 반환하는 함수로, 컴포넌트의 로직을 공유하거나 확장하는 데 유용합니다.
+
+### HOC의 목적과 역할
+
+HOC는 다음과 같은 상황에서 활용됩니다:
+
+- 공통 로직의 재사용 (예: 인증, 상태 관리)
+- 기존 컴포넌트의 기능 확장
+
+### React 컴포넌트와 HOC의 관계
+
+HOC는 React의 컴포넌트 구조를 활용하여 컴포넌트 트리의 특정 역할을 수행하거나, 데이터 전달 및 조작을 처리합니다. 이는 컴포넌트 간 관심사를 분리하는 데 도움을 줍니다.
+
+---
+
+## 2. HOC의 동작 원리
+
+### HOC의 기본 구조
+
+HOC는 일반적으로 다음과 같은 구조를 가집니다:
+
+```typescript
+function withHOC(WrappedComponent: React.ComponentType<any>) {
+  return function EnhancedComponent(props: any) {
+    // 추가 로직 작성
+    return <WrappedComponent {...props} />;
+  };
+}
+```
+
+### 컴포넌트를 인수로 받아 새로운 컴포넌트를 반환하는 방식
+
+HOC는 기존 컴포넌트에 추가 기능을 덧붙여 새로운 컴포넌트를 반환합니다. 이 과정에서 **기존 컴포넌트는 변경되지 않습니다**.
+
+### Props 전달 및 조작
+
+HOC는 부모로부터 전달받은 props를 활용하거나 조작하여 자식 컴포넌트에 전달할 수 있습니다. 이는 컴포넌트 간 데이터 흐름을 제어하는 데 유용합니다.
+
+### 예제: 로깅 기능 추가하기
+
+다음은 HOC를 사용하여 props를 로깅하는 예제입니다:
+
+```typescript
+function withLogger(WrappedComponent: React.ComponentType<any>) {
+  return function EnhancedComponent(props: any) {
+    console.log('Props:', props);
+    return <WrappedComponent {...props} />;
+  };
+}
+
+function HelloWorld(props: { message: string }) {
+  return <div>{props.message}</div>;
+}
+
+const HelloWorldWithLogger = withLogger(HelloWorld);
+
+export default function App() {
+  return <HelloWorldWithLogger message="Hello, HOC!" />;
+}
+```
+
+위 코드에서:
+
+1. `withLogger`는 `HelloWorld` 컴포넌트를 감싸고, `EnhancedComponent`를 반환합니다.
+2. `EnhancedComponent`는 props를 로그에 출력하고, 다시 `WrappedComponent`로 전달합니다.
+3. 결과적으로, `HelloWorldWithLogger`는 `message` props를 출력한 뒤, `HelloWorld`를 렌더링합니다.
+
+### 예제: 사용자 인증 상태 확인하기
+
+사용자가 인증되지 않은 경우 로그인 페이지로 리다이렉트하는 HOC를 작성할 수도 있습니다:
+
+```typescript
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+
+type WithAuthProps = {
+  isAuthenticated: boolean;
+};
+
+function withAuth(WrappedComponent: React.ComponentType<any>) {
+  return function EnhancedComponent(props: WithAuthProps) {
+    const navigate = useNavigate();
+
+    if (!props.isAuthenticated) {
+      navigate('/login');
+      return null;
+    }
+
+    return <WrappedComponent {...props} />;
+  };
+}
+
+function Dashboard(props: { user: string }) {
+  return <div>Welcome, {props.user}!</div>;
+}
+
+const ProtectedDashboard = withAuth(Dashboard);
+
+export default function App() {
+  return <ProtectedDashboard isAuthenticated={false} user="John Doe" />;
+}
+```
+
+위 코드에서:
+
+1. `withAuth`는 인증 여부를 확인하고, 인증되지 않은 경우 로그인 페이지로 리다이렉트합니다.
+2. 인증된 경우, `WrappedComponent`를 렌더링합니다.
+
+---
+
+## 3. HOC의 주요 사용 사례
+
+#### (1) 공통 로직의 재사용
+
+HOC는 여러 컴포넌트에서 동일한 로직을 반복하지 않도록 도와줍니다. 예를 들어, 특정 데이터 로딩 로직을 여러 컴포넌트에서 사용할 수 있습니다.
+
+#### (2) 인증 및 권한 관리
+
+HOC를 사용하면 사용자 인증 상태를 확인하거나 권한을 검사하여 컴포넌트를 조건적으로 렌더링할 수 있습니다.
+
+#### (3) 로딩 및 상태 관리
+
+HOC는 컴포넌트의 로딩 상태를 관리하거나, 데이터 상태를 처리하는 데 유용합니다.
+
+#### (4) 로깅 및 성능 추적
+
+HOC를 활용하여 특정 컴포넌트의 렌더링 시간 또는 사용자 행동을 로깅할 수 있습니다.
+
+---
+
+## 4. HOC 구현 방법
+
+### 간단한 HOC 구현 예제
+
+```typescript
+import React from 'react';
+
+type WithLoadingProps = {
+  isLoading: boolean;
+};
+
+function withLoading<T>(WrappedComponent: React.ComponentType<T>) {
+  return function EnhancedComponent(props: T & WithLoadingProps) {
+    const { isLoading, ...rest } = props;
+
+    if (isLoading) {
+      return <div>Loading...</div>;
+    }
+
+    return <WrappedComponent {...(rest as T)} />;
+  };
+}
+
+// Example usage
+function MyComponent(props: { data: string }) {
+  return <div>Data: {props.data}</div>;
+}
+
+const MyComponentWithLoading = withLoading(MyComponent);
+
+export default function App() {
+  return <MyComponentWithLoading isLoading={true} data="Hello" />;
+}
+```
+
+### Props 추가 및 조작
+
+HOC는 기존 컴포넌트에 추가적인 props를 전달하거나 기존 props를 변환할 수 있습니다.
+
+---
+
+## 5. HOC 사용 시 고려사항
+
+#### (1) Props 이름 충돌 방지
+
+HOC를 작성할 때, 기존 props와 새로운 props 간 충돌이 발생하지 않도록 주의해야 합니다.
+
+#### (2) Wrapper Hell 문제와 해결 방법
+
+HOC를 과도하게 사용하면 컴포넌트 계층 구조가 복잡해질 수 있습니다. 이를 방지하기 위해 HOC를 적절히 분리하고, 필요시 Hooks로 대체할 수 있습니다.
+
+#### (3) React DevTools에서 HOC 디버깅 팁
+
+React DevTools를 사용하여 HOC로 감싼 컴포넌트를 디버깅할 때, 컴포넌트 이름을 설정하거나 `React.memo`를 활용하면 도움이 됩니다.
+
+---
+
+## 6. HOC vs React Hooks
+
+### HOC와 Hooks의 비교
+
+HOC와 Hooks는 모두 로직 재사용을 목표로 하지만, 사용 방식과 구현 방식이 다릅니다. HOC는 컴포넌트를 감싸는 형태로 동작하며, Hooks는 함수 내에서 상태와 효과를 관리합니다.
+
+### HOC를 대체하는 Hooks 사용 사례
+
+Hooks는 HOC보다 간결한 방식으로 상태 관리 및 로직 공유를 처리할 수 있습니다.
+
+### HOC가 여전히 유용한 상황
+
+HOC는 기존 코드베이스를 유지하거나 특정 디자인 패턴을 따를 때 여전히 유용합니다.
+
+---
+
+## 7. 결론
+
+HOC는 React에서 컴포넌트 로직을 재사용하거나 확장할 때 유용한 패턴입니다. 하지만, 프로젝트 요구 사항에 따라 Hooks와 같은 대안 기술을 적절히 활용하는 것이 중요합니다.
